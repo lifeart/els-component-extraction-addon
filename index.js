@@ -27,6 +27,10 @@ function normalizeToAngleBracketComponent(name) {
 
 module.exports = {
   onInit(_, project) {
+    if (!('els.executeInEmberCLI' in project.executors)) {
+      console.error('Unable to find "ember-fast-cli" addon.');
+      return;
+    }
     project.executors['els.extractSourceCodeToComponent'] = async (server, filePath, [componentName, { range, source, uri }]) => {
       try {
         // const ast = server.templateCompletionProvider.getAST(document.getText(range));
