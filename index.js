@@ -34,15 +34,20 @@ module.exports = {
     project.executors["els.extractSourceCodeToComponent"] = async (
       server,
       filePath,
-      [componentName, { range, source, uri }]
+      [rawComponentName, { range, source, uri }]
     ) => {
+      if (!rawComponentName.trim()) {
+        console.log("no component name found");
+        return;
+      }
       try {
         // const ast = server.templateCompletionProvider.getAST(document.getText(range));
         // const focusPath = server.templateCompletionProvider.createFocusPath(ast, ast.loc.start, text);
         await server.onExecute({
           command: "els.executeInEmberCLI",
-          arguments: [filePath, `g component ${componentName}`],
+          arguments: [filePath, `g component ${rawComponentName}`],
         });
+        const componentName = rawComponentName.trim().split(" ").pop();
         // going to wait for file changes api
         await new Promise((resolve) => setTimeout(resolve, 2000));
         const registry = server.getRegistry(project.root);
