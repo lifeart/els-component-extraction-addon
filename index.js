@@ -3,6 +3,28 @@
 const { TextEdit, Position } =  require('vscode-languageserver');
 const { URI } =  require('vscode-uri');
 
+function normalizeToAngleBracketComponent(name) {
+  const SIMPLE_DASHERIZE_REGEXP = /[a-z]|\/|-/g;
+  const ALPHA = /[A-Za-z0-9]/;
+
+  if (name.includes('.')) {
+    return name;
+  }
+
+  return name.replace(SIMPLE_DASHERIZE_REGEXP, (char, index) => {
+    if (char === '/') {
+      return '::';
+    }
+
+    if (index === 0 || !ALPHA.test(name[index - 1])) {
+      return char.toUpperCase();
+    }
+
+    // Remove all occurrences of '-'s from the name that aren't starting with `-`
+    return char === '-' ? '' : char.toLowerCase();
+  });
+}
+
 module.exports = {
   onInit(_, project) {
 
