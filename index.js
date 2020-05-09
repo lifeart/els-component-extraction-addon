@@ -94,7 +94,7 @@ module.exports = {
       },
       "els.extractSourceCodeToComponent",
       {
-        source: params.text,
+        source: params.document.getText(params.range),
         range: params.range,
         uri: params.textDocument.uri,
       }
