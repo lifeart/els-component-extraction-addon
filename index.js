@@ -94,8 +94,8 @@ module.exports = {
       },
       "els.extractSourceCodeToComponent",
       {
-        source: focusPath.sourceForNode(),
-        range,
+        source: params.text,
+        range: params.range,
         uri: params.textDocument.uri,
       }
     );
