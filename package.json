@@ -27,6 +27,9 @@
       "codeActionProvider": true
     }
   },
+  "ember-addon": {
+    "after": "ember-fast-cli"
+  },
   "devDependencies": {
     "jest": "^24.9.0"
   }
