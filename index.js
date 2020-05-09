@@ -27,7 +27,6 @@ function normalizeToAngleBracketComponent(name) {
 
 module.exports = {
   onInit(_, project) {
-
     project.executors['els.extractSourceCodeToComponent'] = async (server, filePath, [componentName, { range, source, uri }]) => {
       try {
         // const ast = server.templateCompletionProvider.getAST(document.getText(range));
@@ -57,7 +56,7 @@ module.exports = {
         };
         await server.connection.workspace.applyEdit(edit);
       } catch (e) {
-        logError(e);
+        console.error(e);
       }
     };
   }
