@@ -40,7 +40,7 @@ module.exports = {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         const registry = server.getRegistry(project.root);
         if (!(componentName in registry.component)) {
-          console.log(`Unable to find component ${componentName} in registry ${JSON.stringify(registry.component)}`);
+          console.log(`Unable to find component ${componentName} in registry ${JSON.stringify(Object.keys(registry.component))}`);
           return;
         }
         const fileName = registry['component'][componentName].find((file) => file.endsWith('.hbs'));
