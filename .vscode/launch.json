@@ -1,0 +1,32 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Launch UELS Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=C:/Users/lifeart/.vscode/extensions/lifeart.vscode-ember-unstable-1.3.2"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "C:/Users/lifeart/.vscode/extensions/lifeart.vscode-ember-unstable-1.3.2/out/src/**/*.js"
+            ]
+        },
+        {
+            "name": "Attach to UELS Server",
+            "type": "node",
+            "request": "attach",
+            "port": 6004,
+            "sourceMaps": true,
+            "protocol": "inspector",
+            "outFiles": [
+                "C:/Users/lifeart/.vscode/extensions/lifeart.vscode-ember-unstable-1.3.2/node_modules/@emberwatch/ember-language-server/lib/**/*.js"
+            ],
+            "restart": true,
+            "smartStep": true
+        }
+    ]
+}
