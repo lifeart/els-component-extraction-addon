@@ -25,7 +25,6 @@ describe("waitForFileNameContains", () => {
       watcherFn("foo", 2);
       expect(hasMatchFunctions()).toBe(false);
       await waiter;
-      expect(1).toBe(1);
     } catch (e) {
       expect(e.toString()).toBe(null);
     }
@@ -36,23 +35,16 @@ describe("waitForFileNameContains", () => {
       watcherFn("foz", 1);
       expect(hasMatchFunctions()).toBe(true);
       await waiter;
-      expect(1).toBe(0);
     } catch (e) {
       expect(hasMatchFunctions()).toBe(false);
-      expect(1).toBe(1);
     }
   });
   it("removing", async () => {
-    try {
-      const waiter = waitForFileNameContains("foo", 100);
-      expect(hasMatchFunctions()).toBe(true);
-      watcherFn("foo", 2);
-      expect(hasMatchFunctions()).toBe(false);
-      await waiter;
-      expect(1).toBe(1);
-    } catch (e) {
-      expect(1).toBe(1);
-    }
+    const waiter = waitForFileNameContains("foo", 100);
+    expect(hasMatchFunctions()).toBe(true);
+    watcherFn("foo", 2);
+    expect(hasMatchFunctions()).toBe(false);
+    await waiter;
   });
   it("has default timeout", async () => {
     const waiter = waitForFileNameContains("foo");
