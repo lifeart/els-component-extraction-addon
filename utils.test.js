@@ -29,6 +29,17 @@ describe("waitForFileNameContains", () => {
       expect(e.toString()).toBe(null);
     }
   });
+  it("supports win paths", async () => {
+    try {
+      const waiter = waitForFileNameContains("foo/bar", 100);
+      expect(hasMatchFunctions()).toBe(true);
+      watcherFn("foo\\bar", 2);
+      expect(hasMatchFunctions()).toBe(false);
+      await waiter;
+    } catch (e) {
+      expect(e.toString()).toBe(null);
+    }
+  });
   it("failing", async () => {
     try {
       const waiter = waitForFileNameContains("foo", 100);

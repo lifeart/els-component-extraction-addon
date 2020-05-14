@@ -22,6 +22,10 @@ function normalizeToAngleBracketComponent(name) {
 
 let matchFunctions = [];
 
+function normalizeFilePath(filePath) {
+    return filePath.split('\\').join('/');
+}
+
 function hasMatchFunctions() {
   return matchFunctions.length > 0;
 }
@@ -40,7 +44,7 @@ function waitForFileNameContains(name, timeout = 2000) {
   });
   timeoutUid = setTimeout(reject, timeout);
   let fn = (uri) => {
-    if (uri.includes(name)) {
+    if (normalizeFilePath(uri).includes(name)) {
       deleteFunction();
       setTimeout(resolve);
     }
