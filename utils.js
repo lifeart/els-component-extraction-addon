@@ -23,26 +23,28 @@ function normalizeToAngleBracketComponent(name) {
 let matchFunctions = [];
 
 function normalizeFilePath(filePath) {
-    return filePath.split('\\').join('/');
+  return filePath.split("\\").join("/");
 }
 
 function hasMatchFunctions() {
   return matchFunctions.length > 0;
 }
 
-function waitForFileNameContains(name, timeout = 2000) {
+function waitForFileNameContains(name, timeout = 10000) {
   let timeoutUid = null;
   let resolve = null;
   let reject = null;
   let deleteFunction = null;
   let item = new Promise((res, rej) => {
     resolve = res;
-    reject = () => {
+    reject = (reason) => {
       deleteFunction();
-      rej();
+      rej(reason);
     };
   });
-  timeoutUid = setTimeout(reject, timeout);
+  timeoutUid = setTimeout(() => {
+    reject("timeout");
+  }, timeout);
   let fn = (uri) => {
     if (normalizeFilePath(uri).includes(name)) {
       deleteFunction();
@@ -58,8 +60,9 @@ function waitForFileNameContains(name, timeout = 2000) {
 }
 
 function watcherFn(uri, changeType) {
+  console.log('watcherFn', uri, changeType);
   // created
-  if (changeType !== 2) {
+  if (changeType !== 1) {
     return;
   }
   matchFunctions.forEach((fn) => fn(uri));
