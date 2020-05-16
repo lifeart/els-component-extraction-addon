@@ -8,12 +8,22 @@ function isUpperCased(char) {
 }
 
 function variableMockByName(name) {
-  if (name.endsWith("s")) {
-    return [];
+  const lowerName = name.toLowerCase();
+
+  if (
+    name.endsWith("s") ||
+    lowerName.includes("collection") ||
+    lowerName.includes("array")
+  ) {
+    return [
+      { id: 1, name: "one" },
+      { id: 2, name: "two" },
+    ];
   }
   if (
     (name.startsWith("on") && isUpperCased(name.charAt(2))) ||
-    name.includes("hande")
+    name.includes("hande") ||
+    name.includes("load")
   ) {
     return `() => assert.ok("event:${name}")`;
   }
@@ -26,6 +36,8 @@ function variableMockByName(name) {
   if (
     name.startsWith("disabled") ||
     name.startsWith("checked") ||
+    name.includes("show") ||
+    name.includes("hide") ||
     name.startsWith("enabled") ||
     name.startsWith("should") ||
     name.startsWith("needs")
@@ -41,7 +53,6 @@ function variableMockByName(name) {
     "length",
     "size",
   ];
-  const lowerName = name.toLowerCase();
   let hasNumericWord = numeric.find((el) => lowerName.includes(el));
   if (hasNumericWord) {
     return 42;

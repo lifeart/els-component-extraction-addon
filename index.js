@@ -126,7 +126,7 @@ module.exports = {
             TextEdit.replace(
               Range.create(
                 Position.create(0, 0),
-                Position.create(0, testContent.length)
+                Position.create(testContent.split('\n').length, testContent.length)
               ),
               newTestContent
             ),
