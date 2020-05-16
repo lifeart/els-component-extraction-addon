@@ -60,7 +60,6 @@ function waitForFileNameContains(name, timeout = 10000) {
 }
 
 function watcherFn(uri, changeType) {
-  console.log('watcherFn', uri, changeType);
   // created
   if (changeType !== 1) {
     return;

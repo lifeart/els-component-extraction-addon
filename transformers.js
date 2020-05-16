@@ -1,6 +1,9 @@
 const { transform } = require("ember-template-recast");
 
-module.exports.transformSelection = function transformSelection(template, helpers = [] ) {
+module.exports.transformSelection = function transformSelection(
+  template,
+  helpers = []
+) {
   const tokens = [];
   const scope = {};
   const externalTokens = new Set();
@@ -8,7 +11,19 @@ module.exports.transformSelection = function transformSelection(template, helper
   const localTokens = new Set();
   const contextualTokensToRename = [];
   const localTokensToRename = [];
-  const ignoredPaths = ['outlet', 'yield', 'component', 'else'];
+  const ignoredPaths = [
+    "outlet",
+    "yield",
+    "component",
+    "else",
+    "on",
+    "concat",
+    "if",
+    "log",
+    "debugger",
+    "unless",
+    "fn",
+  ];
   let blockScope = [];
 
   let { code } = transform(template.trim(), () => {
@@ -59,10 +74,7 @@ module.exports.transformSelection = function transformSelection(template, helper
                     `@scoped${camelName}`
                   );
                 } else {
-                  node.original = original.replace(
-                    `this.${name}`,
-                    `@${name}`
-                  );
+                  node.original = original.replace(`this.${name}`, `@${name}`);
                 }
               }
 
@@ -105,7 +117,10 @@ module.exports.transformSelection = function transformSelection(template, helper
             tokens.push(node);
           } else if (node.original.toLowerCase() !== node.original) {
             tokens.push(node);
-          } else if (!helpers.includes(node.original) && !ignoredPaths.includes(node.original)) {
+          } else if (
+            !helpers.includes(node.original) &&
+            !ignoredPaths.includes(node.original)
+          ) {
             tokens.push(node);
           }
           return;
@@ -124,6 +139,6 @@ module.exports.transformSelection = function transformSelection(template, helper
 
   return {
     code,
-    args: keys
+    args: keys,
   };
 };

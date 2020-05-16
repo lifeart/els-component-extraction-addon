@@ -18,6 +18,11 @@
   "author": "Aleksandr Kanunnikov <lifeart92@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/parser": "^7.9.6",
+    "@babel/template": "^7.8.6",
+    "@babel/traverse": "^7.9.6",
+    "@babel/types": "^7.9.6",
     "ember-template-recast": "^4.1.4",
     "vscode-languageserver": "^6.1.1",
     "vscode-uri": "^2.1.1"

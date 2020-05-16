@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformTests can do default transform for builtin blueprint 1`] = `
+"import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
+module('Integration | Component | form/inline-edit-model-field', function (hooks) {
+  setupRenderingTest(hooks);
+  test('it renders', async function (assert) {
+    this.set('isEnabled', true);
+    this.set('onClick', () => assert.ok(\\"event:onClick\\"));
+    this.set('models', []);
+    this.set('itemSize', 42);;
+    await render(hbs\`<MyComponent @isEnabled={{this.isEnabled}} @onClick={{this.onClick}} @models={{this.models}} @itemSize={{this.itemSize}} />\`);
+    assert.equal(this.element.textContent.trim(), ''); // Template block usage:
+  });
+});"
+`;

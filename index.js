@@ -1,6 +1,7 @@
 "use strict";
 
 const { TextEdit, Position, Range, Command } = require("vscode-languageserver");
+const fs = require("fs");
 const { URI } = require("vscode-uri");
 const {
   normalizeToAngleBracketComponent,
@@ -8,6 +9,7 @@ const {
   watcherFn,
 } = require("./utils");
 const { transformSelection } = require("./transformers");
+const { transformTests } = require("./testing-transformers");
 
 module.exports = {
   onInit(_, project) {
@@ -31,12 +33,26 @@ module.exports = {
           args: [],
         };
         try {
-          const helpers = Object.keys(server.getRegistry(project.root)['helper']);
-          result = transformSelection(source, helpers);
+          const helpers = Object.keys(
+            server.getRegistry(project.root)["helper"]
+          );
+          const components = Object.keys(
+            server.getRegistry(project.root)["component"]
+          );
+          const modifiers = Object.keys(
+            server.getRegistry(project.root)["modifier"]
+          );
+          result = transformSelection(
+            source,
+            [].concat(helpers, components, modifiers)
+          );
         } catch (e) {
           console.log(e.toString());
         }
         let { code, args } = result;
+        let argNames = args
+          .slice(0)
+          .map((el) => el.split("=")[0].replace("@", ""));
 
         if (args.length) {
           args = "  " + args.join("\n  ");
@@ -69,6 +85,9 @@ module.exports = {
         const fileName = registry["component"][componentName].find((file) =>
           file.endsWith(".hbs")
         );
+        const testFileName = registry["component"][componentName].find(
+          (file) => file.includes("test") && file.endsWith(".js")
+        );
         if (!fileName) {
           console.log(
             `Unable to find template file for component ${componentName}`
@@ -85,9 +104,34 @@ module.exports = {
                 `<${normalizeToAngleBracketComponent(componentName)} ${args}/>`
               ),
             ],
-            [fileUri]: [TextEdit.replace(Range.create(Position.create(0, 0), Position.create(0, code.length)), code)],
+            [fileUri]: [
+              TextEdit.replace(
+                Range.create(
+                  Position.create(0, 0),
+                  Position.create(0, code.length)
+                ),
+                code
+              ),
+            ],
           },
         };
+        if (testFileName) {
+          const testContent = fs.readFileSync(testFileName, "utf8");
+          const newTestContent = transformTests(
+            testContent,
+            normalizeToAngleBracketComponent(componentName),
+            argNames
+          );
+          edit.changes[URI.file(testFileName).toString()] = [
+            TextEdit.replace(
+              Range.create(
+                Position.create(0, 0),
+                Position.create(0, testContent.length)
+              ),
+              newTestContent
+            ),
+          ];
+        }
         await server.connection.workspace.applyEdit(edit);
       } catch (e) {
         console.log(e.toString());
