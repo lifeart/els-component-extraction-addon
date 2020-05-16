@@ -33,6 +33,9 @@ function variableMockByName(name) {
   if (name.startsWith("has") && isUpperCased(name.charAt(3))) {
     return false;
   }
+  if (name.startsWith("can") && isUpperCased(name.charAt(3))) {
+    return true;
+  }
   if (
     name.startsWith("disabled") ||
     name.startsWith("checked") ||

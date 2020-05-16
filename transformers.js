@@ -17,6 +17,7 @@ module.exports.transformSelection = function transformSelection(
     "component",
     "else",
     "on",
+    "hash",
     "concat",
     "action",
     "each",
@@ -35,6 +36,16 @@ module.exports.transformSelection = function transformSelection(
   let { code } = transform(template.trim(), () => {
     return {
       Block: {
+        enter(node) {
+          blockScope = [...blockScope, ...node.blockParams];
+        },
+        exit(node) {
+          node.blockParams.forEach(() => {
+            blockScope.pop();
+          });
+        },
+      },
+      ElementNode: {
         enter(node) {
           blockScope = [...blockScope, ...node.blockParams];
         },
