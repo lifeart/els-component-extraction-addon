@@ -82,7 +82,7 @@ module.exports.transformTests = function transformTests(
 
     const scopeValues = {};
     args.forEach((name) => {
-      if (name in shape) {
+      if ((name in shape) && typeof shape[name] !== 'string') {
         scopeValues[name] = shape[name];
       } else {
         scopeValues[name] = variableMockByName(name);
