@@ -30,6 +30,7 @@ module.exports = {
       try {
         let result = {
           code: source,
+          shape: {},
           args: [],
         };
         let rootRegistry = server.getRegistry(project.root);
@@ -44,7 +45,7 @@ module.exports = {
         } catch (e) {
           console.log(e.toString());
         }
-        let { code, args } = result;
+        let { code, args, shape } = result;
         let argNames = args
           .slice(0)
           .map((el) => el.split("=")[0].replace("@", ""));
@@ -113,7 +114,7 @@ module.exports = {
             const newTestContent = transformTests(
               testContent,
               tagName,
-              argNames
+              argNames, shape
             );
             edit.changes[URI.file(testFileName).toString()] = [
               TextEdit.replace(

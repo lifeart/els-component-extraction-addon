@@ -84,7 +84,7 @@ describe("transformTests", () => {
           });
         });
         `,
-        "MyComponent"
+        "MyComponent", ['context', 'boo'], { boo: 12 } 
       )
     ).toMatchSnapshot();
   });

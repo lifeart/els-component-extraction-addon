@@ -6,6 +6,10 @@ function isUpperCased(char) {
 
 function variableMockByName(name) {
   const lowerName = name.toLowerCase();
+  
+  if (lowerName === 'context') {
+    return {};
+  }
 
   if (
     name.endsWith("s") ||
@@ -70,14 +74,19 @@ function variableMockByName(name) {
 module.exports.transformTests = function transformTests(
   text,
   componentName,
-  args = []
+  args = [],
+  shape = {}
 ) {
   function transform(babel) {
     const { types: t, template } = babel;
 
     const scopeValues = {};
     args.forEach((name) => {
-      scopeValues[name] = variableMockByName(name);
+      if (name in shape) {
+        scopeValues[name] = shape[name];
+      } else {
+        scopeValues[name] = variableMockByName(name);
+      }
     });
 
     let testingArgumentsTemplate = [];

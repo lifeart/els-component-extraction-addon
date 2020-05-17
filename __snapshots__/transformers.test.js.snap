@@ -6,6 +6,7 @@ Object {
   "code": "{{#foo-bar as |boo|}}
                 {{boo}}
            {{/foo-bar}}",
+  "shape": Object {},
 }
 `;
 
@@ -15,6 +16,7 @@ Object {
   "code": "<FooBar as |boo|>
             {{boo}}
           </FooBar>",
+  "shape": Object {},
 }
 `;
 
@@ -24,6 +26,9 @@ Object {
     "@context={{this}}",
   ],
   "code": "<MyComponent @model={{@context}} />",
+  "shape": Object {
+    "context": "any",
+  },
 }
 `;
 
@@ -33,6 +38,9 @@ Object {
     "@foo={{this.foo}}",
   ],
   "code": "<div>{{@foo}}</div>",
+  "shape": Object {
+    "foo": "any",
+  },
 }
 `;
 
@@ -42,6 +50,11 @@ Object {
     "@foo={{this.foo}}",
   ],
   "code": "<div>{{@foo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -51,6 +64,97 @@ Object {
     "@foo={{this.foo}}",
   ],
   "code": "<div>{{@foo.baz}}{{@foo.baz.boo}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "baz": Object {
+        "boo": "any",
+      },
+    },
+  },
+}
+`;
+
+exports[`transformSelection can handle each loops 1`] = `
+Object {
+  "args": Array [
+    "@models={{this.models}}",
+  ],
+  "code": "{{#each @models as |item|}}{{item.name}}{{/each}}",
+  "shape": Object {
+    "models": Array [
+      Object {
+        "name": "any",
+      },
+      Object {
+        "name": "any",
+      },
+      Object {
+        "name": "any",
+      },
+    ],
+  },
+}
+`;
+
+exports[`transformSelection can handle each loops 2`] = `
+Object {
+  "args": Array [
+    "@models={{this.models}}",
+  ],
+  "code": "{{#each @models as |item|}}{{item}}{{/each}}",
+  "shape": Object {
+    "models": Array [
+      "foo",
+      "bar",
+      "baz",
+    ],
+  },
+}
+`;
+
+exports[`transformSelection can handle each loops 3`] = `
+Object {
+  "args": Array [
+    "@models={{this.models}}",
+  ],
+  "code": "{{#each @models as |item|}}{{#each item as |it|}}{{it.name}}{{/each}}{{/each}}",
+  "shape": Object {
+    "models": Array [
+      Array [
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+      ],
+      Array [
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+      ],
+      Array [
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+        Object {
+          "name": "any",
+        },
+      ],
+    ],
+  },
 }
 `;
 
@@ -60,6 +164,9 @@ Object {
     "@foo={{@foo}}",
   ],
   "code": "<div>{{@foo}}</div>",
+  "shape": Object {
+    "foo": "any",
+  },
 }
 `;
 
@@ -69,6 +176,11 @@ Object {
     "@foo={{@foo}}",
   ],
   "code": "<div>{{@foo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -78,6 +190,12 @@ Object {
     "@foo={{@foo}}",
   ],
   "code": "<div>{{@foo.baz}} {{@foo.bar}}<</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -87,6 +205,11 @@ Object {
     "@foo={{foo}}",
   ],
   "code": "<div>{{@foo.bar}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+    },
+  },
 }
 `;
 
@@ -96,6 +219,12 @@ Object {
     "@foo={{foo}}",
   ],
   "code": "<div>{{@foo.bar}} {{@foo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -103,6 +232,7 @@ exports[`transformSelection can handle no-args case 1`] = `
 Object {
   "args": Array [],
   "code": "<div></div>",
+  "shape": Object {},
 }
 `;
 
@@ -125,6 +255,12 @@ Object {
                     />
                 {{outlet}}
             </div>",
+  "shape": Object {
+    "currentUser": "any",
+    "model": Object {
+      "journal_id": "any",
+    },
+  },
 }
 `;
 
@@ -135,6 +271,14 @@ Object {
     "@scopedFoo={{this.foo}}",
   ],
   "code": "<div>{{@foo.bar}} {{@scopedFoo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+    },
+    "scopedFoo": Object {
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -145,6 +289,18 @@ Object {
     "@scopedFoo={{this.foo}}",
   ],
   "code": "<div>{{@foo.bar.boo}} {{@scopedFoo.bar.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+    "scopedFoo": Object {
+      "bar": Object {
+        "baz": "any",
+      },
+    },
+  },
 }
 `;
 
@@ -155,6 +311,14 @@ Object {
     "@localFoo={{foo}}",
   ],
   "code": "<div>{{@foo.bar}} {{@localFoo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+    },
+    "localFoo": Object {
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -165,6 +329,18 @@ Object {
     "@localFoo={{foo}}",
   ],
   "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+    "localFoo": Object {
+      "bar": Object {
+        "baz": "any",
+      },
+    },
+  },
 }
 `;
 
@@ -176,6 +352,17 @@ Object {
     "@scopedFoo={{this.foo}}",
   ],
   "code": "<div>{{@foo.bar}} {{@localFoo.bar}} {{@scopedFoo.bar}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+    },
+    "localFoo": Object {
+      "bar": "any",
+    },
+    "scopedFoo": Object {
+      "bar": "any",
+    },
+  },
 }
 `;
 
@@ -187,6 +374,23 @@ Object {
     "@scopedFoo={{this.foo}}",
   ],
   "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.boo}} {{@scopedFoo.bar.boo}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+    "localFoo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+    "scopedFoo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+  },
 }
 `;
 
@@ -197,6 +401,14 @@ Object {
     "@localFoo={{foo}}",
   ],
   "code": "<div>{{@foo.bar}} {{@localFoo.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": "any",
+    },
+    "localFoo": Object {
+      "baz": "any",
+    },
+  },
 }
 `;
 
@@ -207,5 +419,17 @@ Object {
     "@localFoo={{foo}}",
   ],
   "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.baz}}</div>",
+  "shape": Object {
+    "foo": Object {
+      "bar": Object {
+        "boo": "any",
+      },
+    },
+    "localFoo": Object {
+      "bar": Object {
+        "baz": "any",
+      },
+    },
+  },
 }
 `;

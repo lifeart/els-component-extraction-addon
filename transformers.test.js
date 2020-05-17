@@ -87,5 +87,12 @@ describe('transformSelection', () => {
             <MyComponent @model={{this}} />
         `)).toMatchSnapshot();
     });
+
+    it('can handle each loops', () => {
+        expect(transformSelection('{{#each this.models as |item|}}{{item.name}}{{/each}}')).toMatchSnapshot();
+        expect(transformSelection('{{#each this.models as |item|}}{{item}}{{/each}}')).toMatchSnapshot();
+        expect(transformSelection('{{#each this.models as |item|}}{{#each item as |it|}}{{it.name}}{{/each}}{{/each}}')).toMatchSnapshot();
+
+    });
 });
 

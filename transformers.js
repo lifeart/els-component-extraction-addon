@@ -1,9 +1,118 @@
-const { transform } = require("ember-template-recast");
+const { transform, traverse, parse } = require("ember-template-recast");
+const { rebelObject } = require("ember-meta-explorer");
 
-module.exports.transformSelection = function transformSelection(
-  template,
-  helpers = []
-) {
+function argsShapeFromTemplate(tpl) {
+  const tokens = [];
+  let blockScope = [];
+  let currentBlockPath = [];
+  let currentBlockArg = null;
+  let paramsMap = {};
+  traverse(parse(tpl), {
+    Block: {
+      enter(node) {
+        blockScope = [...blockScope, ...node.blockParams];
+      },
+      exit(node) {
+        node.blockParams.forEach(() => {
+          blockScope.pop();
+        });
+      },
+    },
+    BlockStatement: {
+      enter(node) {
+        if (node.path.type === "PathExpression") {
+          if (node.path.original === "each") {
+            const param = node.params[0];
+            if (
+              param.type === "PathExpression" &&
+              (param.data || blockScope.includes(param.parts[0]))
+            ) {
+              let arrKey = `${param.original}.[]`;
+              currentBlockPath.push(arrKey.replace(currentBlockArg || "", ""));
+              paramsMap[arrKey] = node.program.blockParams[0];
+              currentBlockArg = node.program.blockParams[0];
+            }
+          }
+        }
+      },
+      exit(node) {
+        if (node.path.type === "PathExpression") {
+          if (node.path.original === "each") {
+            const param = node.params[0];
+            if (
+              param.type === "PathExpression" &&
+              (param.data || blockScope.includes(param.parts[0]))
+            ) {
+              currentBlockPath.pop();
+              currentBlockArg = paramsMap[last(currentBlockPath)];
+            }
+          }
+        }
+      },
+    },
+    PathExpression(node) {
+      if (node.data) {
+        tokens.push(node.original);
+      } else {
+        const p = node.parts[0];
+        if (
+          !currentBlockPath.length ||
+          !blockScope.length ||
+          !currentBlockArg ||
+          !blockScope.includes(p)
+        ) {
+          return;
+        }
+        let namePath = [];
+        currentBlockPath.forEach((n) => {
+          namePath.push(n);
+        });
+        let name = node.original.replace(currentBlockArg, "");
+        if (name) {
+          namePath.push(name);
+        }
+        if (blockScope.includes(currentBlockArg)) {
+          tokens.push(namePath.join(""));
+        }
+      }
+    },
+  });
+  const rawData = rebelObject(tokens).args || {};
+  createArrays(rawData);
+  return rawData;
+}
+
+function last(arr) {
+  return arr[arr.length - 1];
+}
+
+function createArrays(obj, key = null, parent = {}) {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    return;
+  }
+  let props = Object.keys(obj);
+  props.forEach((name) => {
+    if (name === "[]") {
+      createArrays(obj[name], name, obj);
+      let value = obj[name];
+      if (typeof value === "string") {
+        parent[key] = ["foo", "bar", "baz"];
+      } else {
+        parent[key] = [
+          JSON.parse(JSON.stringify(value)),
+          JSON.parse(JSON.stringify(value)),
+          JSON.parse(JSON.stringify(value)),
+        ];
+      }
+    } else {
+      createArrays(obj[name], name, obj);
+    }
+  });
+  return;
+}
+
+module.exports.argsShapeFromTemplate = argsShapeFromTemplate;
+function transformSelection(template, helpers = []) {
   const tokens = [];
   const scope = {};
   const externalTokens = new Set();
@@ -32,7 +141,6 @@ module.exports.transformSelection = function transformSelection(
     "fn",
   ];
   let blockScope = [];
-
   let { code } = transform(template.trim(), () => {
     return {
       Block: {
@@ -130,9 +238,9 @@ module.exports.transformSelection = function transformSelection(
         if (node.data === false && node.this === false) {
           if (node.parts.length && blockScope.includes(node.parts[0])) {
             // tokens.push(node);
-          } else if (node.original.includes('-')) {
+          } else if (node.original.includes("-")) {
             // skip component-like names
-          }  else if (node.original.includes(".")) {
+          } else if (node.original.includes(".")) {
             tokens.push(node);
           } else if (node.original.toLowerCase() !== node.original) {
             tokens.push(node);
@@ -156,8 +264,18 @@ module.exports.transformSelection = function transformSelection(
       keys.push(`${name}={{${scope[name]}}}`);
     });
 
+  let shape = {};
+  try {
+    shape = argsShapeFromTemplate(code);
+  } catch (e) {
+    //
+  }
+
   return {
     code,
+    shape,
     args: keys,
   };
-};
+}
+
+module.exports.transformSelection = transformSelection;
