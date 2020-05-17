@@ -1,6 +1,9 @@
 const { transform } = require("ember-template-recast");
 
-module.exports.transformSelection = function transformSelection(template, helpers = [] ) {
+module.exports.transformSelection = function transformSelection(
+  template,
+  helpers = []
+) {
   const tokens = [];
   const scope = {};
   const externalTokens = new Set();
@@ -8,12 +11,41 @@ module.exports.transformSelection = function transformSelection(template, helper
   const localTokens = new Set();
   const contextualTokensToRename = [];
   const localTokensToRename = [];
-  const ignoredPaths = ['outlet', 'yield', 'component', 'else'];
+  const ignoredPaths = [
+    "outlet",
+    "yield",
+    "component",
+    "else",
+    "on",
+    "hash",
+    "concat",
+    "action",
+    "each",
+    "input",
+    "mut",
+    "each-in",
+    "get",
+    "if",
+    "log",
+    "debugger",
+    "unless",
+    "fn",
+  ];
   let blockScope = [];
 
   let { code } = transform(template.trim(), () => {
     return {
       Block: {
+        enter(node) {
+          blockScope = [...blockScope, ...node.blockParams];
+        },
+        exit(node) {
+          node.blockParams.forEach(() => {
+            blockScope.pop();
+          });
+        },
+      },
+      ElementNode: {
         enter(node) {
           blockScope = [...blockScope, ...node.blockParams];
         },
@@ -59,10 +91,7 @@ module.exports.transformSelection = function transformSelection(template, helper
                     `@scoped${camelName}`
                   );
                 } else {
-                  node.original = original.replace(
-                    `this.${name}`,
-                    `@${name}`
-                  );
+                  node.original = original.replace(`this.${name}`, `@${name}`);
                 }
               }
 
@@ -101,11 +130,16 @@ module.exports.transformSelection = function transformSelection(template, helper
         if (node.data === false && node.this === false) {
           if (node.parts.length && blockScope.includes(node.parts[0])) {
             // tokens.push(node);
-          } else if (node.original.includes(".")) {
+          } else if (node.original.includes('-')) {
+            // skip component-like names
+          }  else if (node.original.includes(".")) {
             tokens.push(node);
           } else if (node.original.toLowerCase() !== node.original) {
             tokens.push(node);
-          } else if (!helpers.includes(node.original) && !ignoredPaths.includes(node.original)) {
+          } else if (
+            !helpers.includes(node.original) &&
+            !ignoredPaths.includes(node.original)
+          ) {
             tokens.push(node);
           }
           return;
@@ -124,6 +158,6 @@ module.exports.transformSelection = function transformSelection(template, helper
 
   return {
     code,
-    args: keys
+    args: keys,
   };
 };

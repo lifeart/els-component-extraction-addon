@@ -67,6 +67,25 @@ describe('transformSelection', () => {
                 {{outlet}}
             </div>
         `)).toMatchSnapshot();
-    })
+    });
+
+    it('can handle block case', () => {
+        expect(transformSelection(`
+           {{#foo-bar as |boo|}}
+                {{boo}}
+           {{/foo-bar}}
+        `)).toMatchSnapshot();
+        expect(transformSelection(`
+          <FooBar as |boo|>
+            {{boo}}
+          </FooBar>
+        `)).toMatchSnapshot();
+    });
+
+    it('can handle context as argument', () => {
+        expect(transformSelection(`
+            <MyComponent @model={{this}} />
+        `)).toMatchSnapshot();
+    });
 });
 
