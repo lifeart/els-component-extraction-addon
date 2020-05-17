@@ -1,10 +1,7 @@
 const babel = require("@babel/core");
 
 function isUpperCased(char) {
-  if (typeof char !== "string") {
-    return false;
-  }
-  return char.toUpperCase() === char;
+  return char !== "" && char.toUpperCase() === char;
 }
 
 function variableMockByName(name) {
@@ -22,7 +19,7 @@ function variableMockByName(name) {
   }
   if (
     (name.startsWith("on") && isUpperCased(name.charAt(2))) ||
-    name.includes("hande") ||
+    name.includes("handle") ||
     name.includes("load")
   ) {
     return `() => assert.ok("event:${name}")`;
@@ -83,8 +80,8 @@ module.exports.transformTests = function transformTests(
       scopeValues[name] = variableMockByName(name);
     });
 
-    let tpl = [];
-    let ctpl = [];
+    let testingArgumentsTemplate = [];
+    let componentArgumentsTemplate = [];
     Object.keys(scopeValues).forEach((key) => {
       let value = scopeValues[key];
       if (typeof value === "string" && value.includes("=>")) {
@@ -92,8 +89,8 @@ module.exports.transformTests = function transformTests(
       } else {
         value = JSON.stringify(value);
       }
-      tpl.push(`this.set('${key}', ${value});`);
-      ctpl.push(`@${key}={{this.${key}}}`);
+      testingArgumentsTemplate.push(`this.set('${key}', ${value});`);
+      componentArgumentsTemplate.push(`@${key}={{this.${key}}}`);
     });
 
     return {
@@ -110,21 +107,22 @@ module.exports.transformTests = function transformTests(
             }
           });
           const shift = new Array(4).fill(" ").join("");
-          const fn = template`${tpl
+          const compiledTestingArguments = template`${testingArgumentsTemplate
             .map((e, index) => (index ? shift + e : e))
             .join("\n")}`;
-          ctpl.unshift("hbs`<" + componentName);
-          ctpl.push("/>`");
+          componentArgumentsTemplate.unshift("hbs`<" + componentName);
+          componentArgumentsTemplate.push("/>`");
           // need this to get rid of extra semicolon
-          const cfn = template`[${ctpl.join(" ")}]`;
-          const ast = fn({});
-          mainBody.unshift(ast);
+          const compiledComponentArguments = template`[${componentArgumentsTemplate.join(
+            " "
+          )}]`;
+          mainBody.unshift(compiledTestingArguments({}));
           let render = mainBody.find(
             (el) =>
               t.isExpressionStatement(el) && t.isAwaitExpression(el.expression)
           );
           render.expression.argument.arguments = [];
-          const newComponentDefinition = cfn({});
+          const newComponentDefinition = compiledComponentArguments({});
           render.expression.argument.arguments.push(
             newComponentDefinition.expression.elements[0]
           );

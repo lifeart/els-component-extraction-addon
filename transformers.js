@@ -130,7 +130,9 @@ module.exports.transformSelection = function transformSelection(
         if (node.data === false && node.this === false) {
           if (node.parts.length && blockScope.includes(node.parts[0])) {
             // tokens.push(node);
-          } else if (node.original.includes(".")) {
+          } else if (node.original.includes('-')) {
+            // skip component-like names
+          }  else if (node.original.includes(".")) {
             tokens.push(node);
           } else if (node.original.toLowerCase() !== node.original) {
             tokens.push(node);

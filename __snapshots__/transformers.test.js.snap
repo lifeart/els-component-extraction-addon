@@ -1,5 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transformSelection can handle block case 1`] = `
+Object {
+  "args": Array [],
+  "code": "{{#foo-bar as |boo|}}
+                {{boo}}
+           {{/foo-bar}}",
+}
+`;
+
+exports[`transformSelection can handle block case 2`] = `
+Object {
+  "args": Array [],
+  "code": "<FooBar as |boo|>
+            {{boo}}
+          </FooBar>",
+}
+`;
+
+exports[`transformSelection can handle context as argument 1`] = `
+Object {
+  "args": Array [
+    "@context={{this}}",
+  ],
+  "code": "<MyComponent @model={{@context}} />",
+}
+`;
+
 exports[`transformSelection can handle contextual args case 1`] = `
 Object {
   "args": Array [

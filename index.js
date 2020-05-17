@@ -32,16 +32,11 @@ module.exports = {
           code: source,
           args: [],
         };
+        let rootRegistry = server.getRegistry(project.root);
         try {
-          const helpers = Object.keys(
-            server.getRegistry(project.root)["helper"]
-          );
-          const components = Object.keys(
-            server.getRegistry(project.root)["component"]
-          );
-          const modifiers = Object.keys(
-            server.getRegistry(project.root)["modifier"]
-          );
+          const helpers = Object.keys(rootRegistry["helper"]);
+          const components = Object.keys(rootRegistry["component"]);
+          const modifiers = Object.keys(rootRegistry["modifier"]);
           result = transformSelection(
             source,
             [].concat(helpers, components, modifiers)
@@ -62,6 +57,7 @@ module.exports = {
         }
 
         const componentName = rawComponentName.trim().split(" ").pop();
+        const tagName = normalizeToAngleBracketComponent(componentName);
         const waiter = waitForFileNameContains(componentName);
 
         await server.onExecute({
@@ -82,10 +78,11 @@ module.exports = {
           );
           return;
         }
-        const fileName = registry["component"][componentName].find((file) =>
+        const componentRegistry = registry["component"][componentName];
+        const fileName = componentRegistry.find((file) =>
           file.endsWith(".hbs")
         );
-        const testFileName = registry["component"][componentName].find(
+        const testFileName = componentRegistry.find(
           (file) => file.includes("test") && file.endsWith(".js")
         );
         if (!fileName) {
@@ -98,12 +95,7 @@ module.exports = {
 
         const edit = {
           changes: {
-            [uri]: [
-              TextEdit.replace(
-                range,
-                `<${normalizeToAngleBracketComponent(componentName)} ${args}/>`
-              ),
-            ],
+            [uri]: [TextEdit.replace(range, `<${tagName} ${args}/>`)],
             [fileUri]: [
               TextEdit.replace(
                 Range.create(
@@ -116,21 +108,28 @@ module.exports = {
           },
         };
         if (testFileName) {
-          const testContent = fs.readFileSync(testFileName, "utf8");
-          const newTestContent = transformTests(
-            testContent,
-            normalizeToAngleBracketComponent(componentName),
-            argNames
-          );
-          edit.changes[URI.file(testFileName).toString()] = [
-            TextEdit.replace(
-              Range.create(
-                Position.create(0, 0),
-                Position.create(testContent.split('\n').length, testContent.length)
+          try {
+            const testContent = fs.readFileSync(testFileName, "utf8");
+            const newTestContent = transformTests(
+              testContent,
+              tagName,
+              argNames
+            );
+            edit.changes[URI.file(testFileName).toString()] = [
+              TextEdit.replace(
+                Range.create(
+                  Position.create(0, 0),
+                  Position.create(
+                    testContent.split("\n").length,
+                    testContent.length
+                  )
+                ),
+                newTestContent
               ),
-              newTestContent
-            ),
-          ];
+            ];
+          } catch (e) {
+            console.log(e.toString());
+          }
         }
         await server.connection.workspace.applyEdit(edit);
       } catch (e) {

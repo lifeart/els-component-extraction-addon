@@ -10,9 +10,33 @@ module('Integration | Component | form/inline-edit-model-field', function (hooks
   test('it renders', async function (assert) {
     this.set('isEnabled', true);
     this.set('onClick', () => assert.ok(\\"event:onClick\\"));
-    this.set('models', []);
-    this.set('itemSize', 42);;
-    await render(hbs\`<MyComponent @isEnabled={{this.isEnabled}} @onClick={{this.onClick}} @models={{this.models}} @itemSize={{this.itemSize}} />\`);
+    this.set('models', [{\\"id\\":1,\\"name\\":\\"one\\"},{\\"id\\":2,\\"name\\":\\"two\\"}]);
+    this.set('model', {\\"foo\\":\\"bar\\"});
+    this.set('itemlength', 42);
+    this.set('hasColor', false);
+    this.set('canEdit', true);
+    this.set('itemSize', 42);
+    this.set('disabled', true);
+    this.set('item', \\"item\\");
+    this.set('collection', [{\\"id\\":1,\\"name\\":\\"one\\"},{\\"id\\":2,\\"name\\":\\"two\\"}]);
+    this.set('usersArray', [{\\"id\\":1,\\"name\\":\\"one\\"},{\\"id\\":2,\\"name\\":\\"two\\"}]);
+    this.set('handleClick', () => assert.ok(\\"event:handleClick\\"));
+    this.set('loadItems', [{\\"id\\":1,\\"name\\":\\"one\\"},{\\"id\\":2,\\"name\\":\\"two\\"}]);;
+    await render(hbs\`<MyComponent @isEnabled={{this.isEnabled}} @onClick={{this.onClick}} @models={{this.models}} @model={{this.model}} @itemlength={{this.itemlength}} @hasColor={{this.hasColor}} @canEdit={{this.canEdit}} @itemSize={{this.itemSize}} @disabled={{this.disabled}} @item={{this.item}} @collection={{this.collection}} @usersArray={{this.usersArray}} @handleClick={{this.handleClick}} @loadItems={{this.loadItems}} />\`);
+    assert.equal(this.element.textContent.trim(), ''); // Template block usage:
+  });
+});"
+`;
+
+exports[`transformTests can do default transform for builtin blueprint without args 1`] = `
+"import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
+module('Integration | Component | form/inline-edit-model-field', function (hooks) {
+  setupRenderingTest(hooks);
+  test('it renders', async function (assert) {
+    await render(hbs\`<MyComponent />\`);
     assert.equal(this.element.textContent.trim(), ''); // Template block usage:
   });
 });"
