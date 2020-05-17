@@ -36,7 +36,9 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Component | form/inline-edit-model-field', function (hooks) {
   setupRenderingTest(hooks);
   test('it renders', async function (assert) {
-    await render(hbs\`<MyComponent />\`);
+    this.set('context', {});
+    this.set('boo', 12);;
+    await render(hbs\`<MyComponent @context={{this.context}} @boo={{this.boo}} />\`);
     assert.equal(this.element.textContent.trim(), ''); // Template block usage:
   });
 });"
