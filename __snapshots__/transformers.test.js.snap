@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformSelection can handle contextual args case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo}}</div>",
+}
+`;
+
+exports[`transformSelection can handle contextual args.path case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle contextual args.path multi case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.baz}}{{@foo.baz.boo}}</div>",
+}
+`;
+
+exports[`transformSelection can handle external args case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+  ],
+  "code": "<div>{{@foo}}</div>",
+}
+`;
+
+exports[`transformSelection can handle external args.path case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+  ],
+  "code": "<div>{{@foo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle external args.path multi case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+  ],
+  "code": "<div>{{@foo.baz}} {{@foo.bar}}<</div>",
+}
+`;
+
+exports[`transformSelection can handle local args case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar}}</div>",
+}
+`;
+
+exports[`transformSelection can handle local args multi case 1`] = `
+Object {
+  "args": Array [
+    "@foo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar}} {{@foo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle no-args case 1`] = `
+Object {
+  "args": Array [],
+  "code": "<div></div>",
+}
+`;
+
+exports[`transformSelection can handle real case #1 1`] = `
+Object {
+  "args": Array [
+    "@currentUser={{currentUser}}",
+    "@model={{model}}",
+  ],
+  "code": "<div class=\\"ui text container\\">
+                <h1 style=\\"margin-top:20px;\\" class=\\"ui header\\">
+                Journal #
+                    {{@model.journal_id}}
+                </h1>
+                    <SmJournal 
+                        @model={{@model}}
+                        @autoresolve={{true}}
+                        @currentUser={{@currentUser}}
+                        @commentsToggleClass=\\"\\"
+                    />
+                {{outlet}}
+            </div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for contextual + external 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@scopedFoo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.bar}} {{@scopedFoo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for contextual + external 2`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@scopedFoo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.bar.boo}} {{@scopedFoo.bar.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for contextual + local 1`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+    "@localFoo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar}} {{@localFoo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for contextual + local 2`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+    "@localFoo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for external + local + contextual 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@localFoo={{foo}}",
+    "@scopedFoo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.bar}} {{@localFoo.bar}} {{@scopedFoo.bar}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for external + local + contextual 2`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@localFoo={{foo}}",
+    "@scopedFoo={{this.foo}}",
+  ],
+  "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.boo}} {{@scopedFoo.bar.boo}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for external + local 1`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@localFoo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar}} {{@localFoo.baz}}</div>",
+}
+`;
+
+exports[`transformSelection can handle same args case for external + local 2`] = `
+Object {
+  "args": Array [
+    "@foo={{@foo}}",
+    "@localFoo={{foo}}",
+  ],
+  "code": "<div>{{@foo.bar.boo}} {{@localFoo.bar.baz}}</div>",
+}
+`;

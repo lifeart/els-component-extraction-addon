@@ -1,12 +1,13 @@
 "use strict";
 
-const { TextEdit, Position, Command } = require("vscode-languageserver");
+const { TextEdit, Position, Range, Command } = require("vscode-languageserver");
 const { URI } = require("vscode-uri");
 const {
   normalizeToAngleBracketComponent,
   waitForFileNameContains,
   watcherFn,
 } = require("./utils");
+const { transformSelection } = require("./transformers");
 
 module.exports = {
   onInit(_, project) {
@@ -25,15 +26,37 @@ module.exports = {
         return;
       }
       try {
-        // const ast = server.templateCompletionProvider.getAST(document.getText(range));
-        // const focusPath = server.templateCompletionProvider.createFocusPath(ast, ast.loc.start, text);
+        let result = {
+          code: source,
+          args: [],
+        };
+        try {
+          const helpers = Object.keys(server.getRegistry(project.root)['helper']);
+          result = transformSelection(source, helpers);
+        } catch (e) {
+          console.log(e.toString());
+        }
+        let { code, args } = result;
+
+        if (args.length) {
+          args = "  " + args.join("\n  ");
+          args = `  \n${args} \n`;
+        } else {
+          args = "";
+        }
+
         const componentName = rawComponentName.trim().split(" ").pop();
         const waiter = waitForFileNameContains(componentName);
+
         await server.onExecute({
           command: "els.executeInEmberCLI",
           arguments: [filePath, `g component ${rawComponentName}`],
         });
-        await waiter;
+        try {
+          await waiter;
+        } catch (e) {
+          console.log("unable to find document change event");
+        }
         const registry = server.getRegistry(project.root);
         if (!(componentName in registry.component)) {
           console.log(
@@ -53,20 +76,21 @@ module.exports = {
           return;
         }
         const fileUri = URI.file(fileName).toString();
+
         const edit = {
           changes: {
             [uri]: [
               TextEdit.replace(
                 range,
-                `<${normalizeToAngleBracketComponent(componentName)} />`
+                `<${normalizeToAngleBracketComponent(componentName)} ${args}/>`
               ),
             ],
-            [fileUri]: [TextEdit.insert(Position.create(0, 0), source)],
+            [fileUri]: [TextEdit.replace(Range.create(Position.create(0, 0), Position.create(0, code.length)), code)],
           },
         };
         await server.connection.workspace.applyEdit(edit);
       } catch (e) {
-        console.error(e);
+        console.log(e.toString());
       }
     };
   },
