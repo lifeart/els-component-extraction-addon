@@ -40,6 +40,7 @@ function variableMockByName(name) {
   if (
     name.startsWith("disabled") ||
     name.startsWith("checked") ||
+    name.startsWith("should") ||
     name.includes("show") ||
     name.includes("hide") ||
     name.startsWith("enabled") ||
