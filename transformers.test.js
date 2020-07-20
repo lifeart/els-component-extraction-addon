@@ -94,5 +94,20 @@ describe('transformSelection', () => {
         expect(transformSelection('{{#each this.models as |item|}}{{#each item as |it|}}{{it.name}}{{/each}}{{/each}}')).toMatchSnapshot();
 
     });
+
+    it('can handle actions', () => {
+        expect(transformSelection('<button onclick={{action "foo"}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button onclick={{action "foo" bar}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button onclick={{action "foo" (bar)}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button onclick={{action this.foo bar}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button onclick={{action this.foo (bar)}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button onclick={{action this.foo}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action "foo" (bar)}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action "foo" bar}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action "foo"}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action this.foo}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action this.foo "bar"}}></button>')).toMatchSnapshot();
+        expect(transformSelection('<button {{action this.foo (bar)}}></button>')).toMatchSnapshot();
+    });
 });
 

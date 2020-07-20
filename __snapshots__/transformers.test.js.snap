@@ -1,5 +1,147 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transformSelection can handle actions 1`] = `
+Object {
+  "args": Array [],
+  "code": "<button onclick={{action \\"foo\\"}}></button>",
+  "shape": Object {},
+}
+`;
+
+exports[`transformSelection can handle actions 2`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+  ],
+  "code": "<button onclick={{action \\"foo\\" @bar}}></button>",
+  "shape": Object {
+    "bar": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 3`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+  ],
+  "code": "<button onclick={{action \\"foo\\" (@bar)}}></button>",
+  "shape": Object {
+    "bar": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 4`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button onclick={{action @foo @bar}}></button>",
+  "shape": Object {
+    "bar": "any",
+    "foo": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 5`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button onclick={{action @foo (@bar)}}></button>",
+  "shape": Object {
+    "bar": "any",
+    "foo": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 6`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button onclick={{action @foo}}></button>",
+  "shape": Object {
+    "foo": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 7`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+  ],
+  "code": "<button {{action \\"foo\\" (@bar)}}></button>",
+  "shape": Object {
+    "bar": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 8`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+  ],
+  "code": "<button {{action \\"foo\\" @bar}}></button>",
+  "shape": Object {
+    "bar": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 9`] = `
+Object {
+  "args": Array [],
+  "code": "<button {{action \\"foo\\"}}></button>",
+  "shape": Object {},
+}
+`;
+
+exports[`transformSelection can handle actions 10`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button {{action @foo}}></button>",
+  "shape": Object {
+    "foo": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 11`] = `
+Object {
+  "args": Array [
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button {{action @foo \\"bar\\"}}></button>",
+  "shape": Object {
+    "foo": "any",
+  },
+}
+`;
+
+exports[`transformSelection can handle actions 12`] = `
+Object {
+  "args": Array [
+    "@bar={{bar}}",
+    "@foo={{this.foo}}",
+  ],
+  "code": "<button {{action @foo (@bar)}}></button>",
+  "shape": Object {
+    "bar": "any",
+    "foo": "any",
+  },
+}
+`;
+
 exports[`transformSelection can handle block case 1`] = `
 Object {
   "args": Array [],

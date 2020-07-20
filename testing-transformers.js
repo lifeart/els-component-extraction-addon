@@ -13,6 +13,7 @@ function variableMockByName(name) {
 
   if (
     name.endsWith("s") ||
+    name.endsWith("list") ||
     lowerName.includes("collection") ||
     lowerName.includes("array")
   ) {
@@ -23,6 +24,7 @@ function variableMockByName(name) {
   }
   if (
     (name.startsWith("on") && isUpperCased(name.charAt(2))) ||
+    (name.startsWith("set") && isUpperCased(name.charAt(3))) ||
     name.includes("handle") ||
     name.includes("load")
   ) {
@@ -85,6 +87,10 @@ module.exports.transformTests = function transformTests(
     args.forEach((name) => {
       if ((name in shape) && typeof shape[name] !== 'string') {
         scopeValues[name] = shape[name];
+        const isPseudoArray = !Array.isArray(scopeValues[name]) && typeof shape === 'object' && shape !== null && 'length' in shape && shape.length === 'any' && Object.keys(shape).length === 1;
+        if (isPseudoArray) {
+          scopeValues[name] = ['one', 'two', 'three'];
+        }
       } else {
         scopeValues[name] = variableMockByName(name);
       }
